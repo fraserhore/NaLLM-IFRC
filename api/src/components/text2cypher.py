@@ -32,7 +32,7 @@ class Text2Cypher(BaseComponent):
         Use only the provided relationship types and properties.
         Do not use any other relationship types or properties that are not provided.
         """
-        if self.schema:
+        if hasattr(self, 'schema') and self.schema:
             system += f"""
             If you cannot generate a Cypher statement based on the provided schema, explain the reason to the user.
             Schema:

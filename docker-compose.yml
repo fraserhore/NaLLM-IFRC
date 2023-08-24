@@ -12,6 +12,7 @@ services:
       - .env
     volumes:
       - ./api:/api
+    network_mode: host
   frontend:
     build:
       context: ./ui

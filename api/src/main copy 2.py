@@ -41,10 +41,10 @@ class questionProposalPayload(BaseModel):
 HARD_LIMIT_CONTEXT_RECORDS = 10
 
 neo4j_connection = Neo4jDatabase(
-    host=os.environ.get("NEO4J_URL", "neo4j+s://demo.neo4jlabs.com"),
-    user=os.environ.get("NEO4J_USER", "companies"),
-    password=os.environ.get("NEO4J_PASS", "companies"),
-    database=os.environ.get("NEO4J_DATABASE", "companies"),
+    host=os.environ.get("NEO4J_URL", "bolt://localhost:7687"),
+    user=os.environ.get("NEO4J_USER", "neo4j"),
+    password=os.environ.get("NEO4J_PASS", "Graph4Knowledge4Good"),
+    database=os.environ.get("NEO4J_DATABASE", "neo4j"),
 )
 
 
@@ -87,18 +87,7 @@ async def questionProposalsForCurrentDb(payload: questionProposalPayload):
         ),
     )
 
-    # Commenting out as this is generating too many tokens.
-    # return questionProposalGenerator.run()
-
-    return {
-            "output": [
-                'How many national societies are there?', 
-                'How many national societies are there in Africa?',
-                'Which national societies have been affected by an earthquake?',
-                'Which research projects include Uganda?',
-                'What are the core principles of the IFRC?'
-                ],
-        }
+    return questionProposalGenerator.run()
 
 
 @app.get("/hasapikey")
@@ -155,8 +144,6 @@ async def websocket_endpoint(websocket: WebSocket):
                 database=neo4j_connection,
                 llm=default_llm,
                 cypher_examples=get_fewshot_examples(api_key),
-                use_schema=False,
-                ignore_relationship_direction=False,
             )
 
             if "type" not in data:

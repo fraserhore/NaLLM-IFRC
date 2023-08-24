@@ -87,18 +87,7 @@ async def questionProposalsForCurrentDb(payload: questionProposalPayload):
         ),
     )
 
-    # Commenting out as this is generating too many tokens.
-    # return questionProposalGenerator.run()
-
-    return {
-            "output": [
-                'How many national societies are there?', 
-                'How many national societies are there in Africa?',
-                'Which national societies have been affected by an earthquake?',
-                'Which research projects include Uganda?',
-                'What are the core principles of the IFRC?'
-                ],
-        }
+    return questionProposalGenerator.run()
 
 
 @app.get("/hasapikey")
@@ -155,8 +144,6 @@ async def websocket_endpoint(websocket: WebSocket):
                 database=neo4j_connection,
                 llm=default_llm,
                 cypher_examples=get_fewshot_examples(api_key),
-                use_schema=False,
-                ignore_relationship_direction=False,
             )
 
             if "type" not in data:
