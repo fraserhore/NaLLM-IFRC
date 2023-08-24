@@ -11,6 +11,10 @@ MATCH (n:NationalSociety)-[:LOCATED_IN]->(:Country)-[:AFFECTED_BY]->(:Crisis)-[:
 RETURN DISTINCT n.name AS NationalSociety
 #Which research projects include Uganda?
 MATCH (p:ResearchProject)-[:INCLUDES]-(c:Country {{name: "Uganda"}}) RETURN p.project_title AS project_title
+#How many lessons are related to both strong winds and coordination with authorities?
+MATCH (l:Lesson)-[:RELATED_TO]->(:Hazard {{name: 'Strong Wind'}})
+MATCH (l)-[:RELATED_TO]->(:Per_Component {{name: 'Coordination with Authorities'}}) 
+RETURN count(l) AS numberOfLessons
 #What are the core principles of the IFRC?
 CALL apoc.ml.openai.embedding(["What are the core principles of the IFRC?"], 
    "{openai_api_key}") YIELD embedding

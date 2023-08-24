@@ -141,13 +141,14 @@ async def websocket_endpoint(websocket: WebSocket):
 
             default_llm = OpenAIChat(
                 openai_api_key=api_key,
-                model_name=data.get("model_name", "gpt-3.5-turbo-0613"),
+                #model_name=data.get("model_name", "gpt-3.5-turbo-16k"),
+                model_name="gpt-3.5-turbo-16k",
             )
             summarize_results = SummarizeCypherResult(
                 llm=OpenAIChat(
                     openai_api_key=api_key,
-                    model_name="gpt-3.5-turbo-0613",
-                    max_tokens=128,
+                    model_name="gpt-3.5-turbo-16k",
+                    max_tokens=1000,
                 )
             )
 
@@ -155,7 +156,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 database=neo4j_connection,
                 llm=default_llm,
                 cypher_examples=get_fewshot_examples(api_key),
-                use_schema=False,
+                use_schema=True,
                 ignore_relationship_direction=False,
             )
 
