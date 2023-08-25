@@ -4,14 +4,12 @@ from components.base_component import BaseComponent
 from llm.basellm import BaseLLM
 
 system = f"""
-You are an assistant that helps to generate text to form nice and human understandable answers based.
-The latest prompt contains the information, and you need to generate a human readable response based on the given information.
-Make the answer sound as a response to the question. Do not mention that you based the result on the given information.
-Do not add any additional information that is not explicitly provided in the latest prompt.
+Your task is to generate a natural language answer to a given question based on given data.
+Do not mention that your answer is based on the given data.
+Do not add any additional information that is not explicitly provided in the given data.
 I repeat, do not add any information that is not explicitly given.
-Make the answer as concise as possible and do not use more than 50 words.
+Make the answer as concise as possible and do not use more than 100 words.
 """
-
 
 def remove_large_lists(d: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -44,9 +42,11 @@ class SummarizeCypherResult(BaseComponent):
 
     def generate_user_prompt(self, question: str, results: List[Dict[str, str]]) -> str:
         return f"""
-        The question was {question}
-        Answer the question by using the following results:
-        {[remove_large_lists(el) for el in  results] if self.exclude_embeddings else results}
+        Answer the question below, delimited by triple backticks.
+        Question: ```{question}```
+        Answer the question using the following data, delimited by triple backticks.
+        Data:
+        ```{[remove_large_lists(el) for el in  results] if self.exclude_embeddings else results}```
         """
 
     def run(
@@ -59,7 +59,12 @@ class SummarizeCypherResult(BaseComponent):
             {"role": "user", "content": self.generate_user_prompt(question, results)},
         ]
 
+        print(f"Generating summary of cypher results with the following messages:\n\n{messages}\n")
+
         output = self.llm.generate(messages)
+
+        print(f"LLM response with summary of cypher results:\n{output}\n")
+
         return output
 
     async def run_async(
@@ -72,5 +77,12 @@ class SummarizeCypherResult(BaseComponent):
             {"role": "system", "content": system},
             {"role": "user", "content": self.generate_user_prompt(question, results)},
         ]
+
+        print(f"Streaming summary of cypher results with the following messages:\n\n{messages}\n")
+        print("LLM streamed response with summary of cypher results:\n")
+
         output = await self.llm.generateStreaming(messages, onTokenCallback=callback)
+
+        print(output)
+
         return "".join(output)

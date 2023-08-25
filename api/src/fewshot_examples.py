@@ -1,21 +1,27 @@
 def get_fewshot_examples(openai_api_key):
     return f"""
-#How many National Societies are there?
+Question: How many National Societies are there?
+Cypher:
 MATCH (n:NationalSociety)
 RETURN count(n) AS numberOfNationalSocieties
-#How many National Societies are there in Africa?
+Question: How many National Societies are there in Africa?
+Cypher:
 MATCH (n:NationalSociety)-[:LOCATED_IN]->(:Country)-[:LOCATED_IN*]->(:Region {{name: 'Africa'}})
 RETURN count(n) AS numberOfNationalSocieties
-#Which National Societies have been affected by an earthquake?
+Question: Which National Societies have been affected by an earthquake?
+Cypher:
 MATCH (n:NationalSociety)-[:LOCATED_IN]->(:Country)-[:AFFECTED_BY]->(:Crisis)-[:HAS_DRIVER]->(:Driver {{name: 'Earthquake'}}) 
 RETURN DISTINCT n.name AS NationalSociety
-#Which research projects include Uganda?
+Question: Which research projects include Uganda?
+Cypher:
 MATCH (p:ResearchProject)-[:INCLUDES]-(c:Country {{name: "Uganda"}}) RETURN p.project_title AS project_title
-#How many lessons are related to both strong winds and coordination with authorities?
+Question: How many lessons are related to both strong winds and coordination with authorities?
+Cypher:
 MATCH (l:Lesson)-[:RELATED_TO]->(:Hazard {{name: 'Strong Wind'}})
 MATCH (l)-[:RELATED_TO]->(:Per_Component {{name: 'Coordination with Authorities'}}) 
 RETURN count(l) AS numberOfLessons
-#What are the core principles of the IFRC?
+Question: What are the core principles of the IFRC?
+Cypher:
 CALL apoc.ml.openai.embedding(["What are the core principles of the IFRC?"], 
    "{openai_api_key}") YIELD embedding
 MATCH (c:Chunk)
@@ -23,7 +29,8 @@ WHERE c.embedding
 WITH c, gds.similarity.cosine(c.embedding, embedding) AS score
 ORDER BY score DESC LIMIT 3
 RETURN c.text, score
-#What is Microsoft policy regarding to the return to office?
+Question: What is Microsoft policy regarding to the return to office?
+Cypher:
 CALL apoc.ml.openai.embedding(["What is Microsoft policy regarding to the return to office?"], "{openai_api_key}") YIELD embedding
 MATCH (o:Organization {{name:"Microsoft"}})<-[:MENTIONS]-()-[:HAS_CHUNK]->(c)
 WHERE c.embedding

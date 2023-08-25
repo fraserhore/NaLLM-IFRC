@@ -118,7 +118,7 @@ class Neo4jDatabase:
         rels = [el["output"] for el in self.query(rel_query)]
         schema = schema_text(node_props, rel_props, rels)
         self.schema = schema
-        print(schema)
+        #print(schema)
 
     def check_if_empty(self) -> bool:
         data = self.query(

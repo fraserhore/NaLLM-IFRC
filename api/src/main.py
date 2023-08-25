@@ -171,7 +171,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     results = None
                     try:
                         results = text2cypher.run(question, chatHistory)
-                        print("results", results)
+                        #print("results", results)
                     except Exception as e:
                         await sendErrorMessage(str(e))
                         continue
