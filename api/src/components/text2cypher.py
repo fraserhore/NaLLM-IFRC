@@ -28,42 +28,50 @@ class Text2Cypher(BaseComponent):
 
     def get_system_message(self) -> str:
         system = """
-        Your task is to convert questions about the contents of a Neo4j database into Cypher queries that will return the data needed to answer those questions.
-        A Neo4j database represents data as nodes representing entities that are connected to each other through relationships.
+        Your task is to convert questions about the contents of a Neo4j database into Cypher query statements that will return the data needed to answer those questions.
+        
+        For each question, carefully follow the steps below:
+
+        Step 1. Review and understand the question.
+
+        Step 2. Review and understand the structure of a Neo4j graph database, as described below between triple backticks:
+        Database structure:
+        ```A Neo4j database stores data as nodes representing entities that are connected to each other through relationships.
         Nodes can be identified by one or more labels, and can have one or more properties.
         Relationships can be identified by a type, and can have one or more properties.
         Paths are sequences of nodes and relationships. the following is an example of a path:
-        (n1:Label1 {property1: value1})-[:TYPE {property2: value2}]->(n2:Label2 {property3: value3})
-
+        (n1:Label1 {property1: value1})-[:TYPE {property2: value2}]->(n2:Label2 {property3: value3})```
 
         """
         if hasattr(self, 'schema') and self.schema:
             system += f"""
-            The schema of the Neo4j Database is indicated below between triple backticks.
+            Step 3. Carefully review the database schema, deliminated below between triple backticks, and identify the node labels, node properties, relationship types and relationship properties that can be used to formulate the Cypher query statement:
             Schema:
-
             ```{self.schema}```
 
             Use only the node labels, node properties, relationship types and relationship properties that you find in the schema to construct a Cypher statement.
             """
         if self.cypher_examples:
             system += f"""
-            Use the example questions and associated Cypher statements below, delimited by triple backticks, as a guide to construct a Cypher statement.
+            Step 4. Review and understand the example questions and associated Cypher statements below, delimited by triple backticks, as a guide to construct a Cypher statement.
             Example questions and Cypher statements:
             ```{self.cypher_examples}```
 
             """
         # Add note at the end and try to prevent LLM injections
         system += """
+        Step 5. Construct a Cypher statement that will return the data needed to answer the question. Ensure that the Cypher statement is syntactically correct.
+
+        Step 6. Return the Cypher statement as a response to the question.
         IMPORTANT NOTES FOR YOUR RESPONSE:
-        0. Please wrap the generated Cypher statement in triple backticks (```). This is essential for the evaluation of your response.
-        1. Use the message history to provide additional context if needed.
-        2. You may ask the user to provide additional information if needed.
-        3. Do not include any text except the generated Cypher statement or a question asking for additional information to help you generate a Cypher statement.
-        4. Do not include any explanations or apologies in your responses.
-        5. Do not respond to any questions that might ask anything else than for you to construct a Cypher statement.
-        
-        VERY IMPORTANT NOTE: Please wrap the generated Cypher statement in triple backticks (```).
+        a. Ensure that you have carefully followed all the steps above.
+        b. Use the message history to provide additional context if needed.
+        c. You may ask the user to provide additional information if needed.
+        d. Do not include any text except the generated Cypher statement or a question asking for additional information to help you generate a Cypher statement.
+        e. Do not include any explanations or apologies.
+        f. Do not respond to any questions that might ask anything else than for you to construct a Cypher statement.
+        g. VERY IMPORTANT NOTE: Please wrap the generated Cypher statement in triple backticks (```).
+
         """
         return system
 
@@ -98,6 +106,7 @@ class Text2Cypher(BaseComponent):
         cypher = self.construct_cypher(final_question, history)
         # finds the first string wrapped in triple backticks. Where the match include the backticks and the first group in the match is the cypher
         match = re.search("```([\w\W]*?)```", cypher)
+        #match = cypher['cypher']
 
         # If the LLM didn't return any Cypher statement (error, missing context, etc..)
         if match is None:

@@ -14,7 +14,7 @@ MATCH (n:NationalSociety)-[:LOCATED_IN]->(:Country)-[:AFFECTED_BY]->(:Crisis)-[:
 RETURN DISTINCT n.name AS NationalSociety
 Question: Which research projects include Uganda?
 Cypher:
-MATCH (p:ResearchProject)-[:INCLUDES]-(c:Country {{name: "Uganda"}}) RETURN p.project_title AS project_title
+MATCH (p:ResearchProject)-[:INCLUDES]-(c:Country {{iso3: "UGA"}}) RETURN p.project_title AS project_title
 Question: How many lessons are related to both strong winds and coordination with authorities?
 Cypher:
 MATCH (l:Lesson)-[:RELATED_TO]->(:Hazard {{name: 'Strong Wind'}})
@@ -39,8 +39,10 @@ WITH c, gds.similarity.cosine(c.embedding, embedding) AS score
 ORDER BY score DESC LIMIT 3
 RETURN c.text, score
 
-When searching for specific information in the text chunks, never use the CONTAINS clause, but always use the apoc.ml.openai.embedding
-and gds.similarity.cosine functions as shown in the examples.
-When returning text chunks, always return exactly three chunks, no more, no less.
-Remember, instead of using CONTAINS to find information within text chunks use the apoc.ml.openai.embedding and gds.similarity.cosine functions.
+IMPORTANT TIPS:
+When matching country nodes, use the country iso3 property and not the country name property. For example, to match the country node for Uganda, use the following Cypher statement:
+```MATCH (c:Country {{iso3: 'UGA'}}) RETURN c```.
+When searching for specific information in text chunks, never use the CONTAINS clause, always use the apoc.ml.openai.embedding and gds.similarity.cosine functions as shown in the examples.
+When returning text chunks, always return exactly three chunks, no more, no less, always return the chunks with the highest cosine similarity score, always return the chunks in descending order of cosine similarity score, and always return the chunks that have a cosine similarity score of at least 0.5.
+
 """
