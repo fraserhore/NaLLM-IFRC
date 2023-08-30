@@ -96,7 +96,11 @@ async def questionProposalsForCurrentDb(payload: questionProposalPayload):
                 'How many national societies are there in Africa?',
                 'Which national societies have been affected by an earthquake?',
                 'Which research projects include Uganda?',
-                'What are the core principles of the IFRC?'
+                'What are the core principles of the IFRC?',
+                'What are the income groups?',
+                'what are the crisis drivers?',
+                'what are the hazards?',
+                'How many national societies have been affected by a cyclone?',
                 ],
         }
 

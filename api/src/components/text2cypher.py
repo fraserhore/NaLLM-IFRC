@@ -39,13 +39,13 @@ class Text2Cypher(BaseComponent):
         ```A Neo4j database stores data as nodes representing entities that are connected to each other through relationships.
         Nodes can be identified by one or more labels, and can have one or more properties.
         Relationships can be identified by a type, and can have one or more properties.
-        Paths are sequences of nodes and relationships. the following is an example of a path:
+        Paths are sequences of nodes and relationships. The following is an example of a path:
         (n1:Label1 {property1: value1})-[:TYPE {property2: value2}]->(n2:Label2 {property3: value3})```
 
         """
         if hasattr(self, 'schema') and self.schema:
             system += f"""
-            Step 3. Carefully review the database schema, deliminated below between triple backticks, and identify the node labels, node properties, relationship types and relationship properties that can be used to formulate the Cypher query statement:
+            Step 3. Carefully review the database schema, delimited below between triple backticks, and identify the node labels, node properties, relationship types and relationship properties that can be used to formulate the Cypher query statement:
             Schema:
             ```{self.schema}```
 
