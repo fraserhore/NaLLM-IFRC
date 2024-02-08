@@ -8,7 +8,8 @@ Your task is to generate a natural language answer to a given question based on 
 Do not mention that your answer is based on the given data.
 Do not add any additional information that is not explicitly provided in the given data.
 I repeat, do not add any information that is not explicitly given.
-Make the answer as concise as possible and do not use more than 100 words.
+Make the answer as concise as possible and do not use more than 100 words. 
+Use bullet points for lists longer than three items.
 """
 
 def remove_large_lists(d: Dict[str, Any]) -> Dict[str, Any]:

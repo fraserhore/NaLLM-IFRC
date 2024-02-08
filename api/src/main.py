@@ -45,6 +45,10 @@ neo4j_connection = Neo4jDatabase(
     user=os.environ.get("NEO4J_USER", "companies"),
     password=os.environ.get("NEO4J_PASS", "companies"),
     database=os.environ.get("NEO4J_DATABASE", "companies"),
+    #host=os.environ.get("AURA_URL", "neo4j+s://demo.neo4jlabs.com"),
+    #user=os.environ.get("AURA_USER", "companies"),
+    #password=os.environ.get("AURA_PASS", "companies"),
+    #database=os.environ.get("AURA_DATABASE", "neo4j"),
 )
 
 
@@ -101,6 +105,7 @@ async def questionProposalsForCurrentDb(payload: questionProposalPayload):
                 'what are the crisis drivers?',
                 'what are the hazards?',
                 'How many national societies have been affected by a cyclone?',
+                'What are the key lessons related to ensuring preparedness and resilient communities?',
                 ],
         }
 

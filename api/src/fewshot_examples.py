@@ -29,15 +29,22 @@ WHERE c.embedding
 WITH c, gds.similarity.cosine(c.embedding, embedding) AS score
 ORDER BY score DESC LIMIT 3
 RETURN c.text, score
-Question: What is Microsoft policy regarding to the return to office?
+Question: What is the biggest disaster in living memory?
 Cypher:
-CALL apoc.ml.openai.embedding(["What is Microsoft policy regarding to the return to office?"], "{openai_api_key}") YIELD embedding
-MATCH (o:Organization {{name:"Microsoft"}})<-[:MENTIONS]-()-[:HAS_CHUNK]->(c)
+CALL apoc.ml.openai.embedding(["What is the biggest disaster in living memory?"], 
+   "{openai_api_key}") YIELD embedding
+MATCH (c:Chunk)
 WHERE c.embedding
-WITH distinct c, embedding
 WITH c, gds.similarity.cosine(c.embedding, embedding) AS score
 ORDER BY score DESC LIMIT 3
 RETURN c.text, score
+Question: What are the key lessons related to ensuring preparedness and resilient communities?
+Cypher:
+CALL apoc.ml.openai.embedding(["What are the key lessons related to ensuring preparedness and resilient communities?"], 
+   "{openai_api_key}") YIELD embedding
+CALL db.index.vector.queryNodes('lesson-embeddings', 10, embedding)
+YIELD node AS lesson, score
+RETURN lesson.excerpt, score
 
 IMPORTANT TIPS:
 When matching country nodes, use the country iso3 property and not the country name property. For example, to match the country node for Uganda, use the following Cypher statement:
